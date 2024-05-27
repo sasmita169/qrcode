@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  firstName  String
+  middleName String?
+  lastName   String
+  email      String   @unique
+  phone      String   @unique
+  password   String
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  price       Float
+  sku         String   @unique
+  description String?
+  batchCode   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  qrCodes     QrCode[]
+}
+
+model QrCode {
+  id         String   @id @default(uuid())
+  qrCodeData String
+  secret     String
+  isUsed     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
